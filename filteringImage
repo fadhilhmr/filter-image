@@ -1,0 +1,109 @@
+import numpy as np
+import cv2
+from tkinter import *
+from tkinter import filedialog
+from tkinter.filedialog import askopenfilename
+from tkinter.messagebox import showerror
+from tkinter.messagebox import showinfo
+
+class GradingImage(Canvas):
+
+    def __init__(self, master):
+        self.master = master #assign Tk ke variabel agar pengbuahan tidak menggubah seluruh kode
+        master.title("FILTER YOUR IMAGE [by Fadhil Ilham Rahmadi | 1806191194]")
+        master.geometry("500x200")
+        label_file = Label(master, text = "Pick your file") 
+        label_file.grid(row=0, column=2)
+        self.file_path=StringVar()
+        entry_file = Entry(master, textvariable = self.file_path)
+        entry_file.grid(row=1, column=2)
+        self.entry_file = entry_file
+        self.buttons1 = Button(self.master, text="Open your image", command = self.choose_file)
+        self.buttons1.grid(row=2, column=2)
+        label_save = Label(master, text = "Save graded image to JPG file ")
+        label_save.grid(row=3, column=2)
+        self.input_save = StringVar() #menyimpan input sebagai string
+        entry_save = Entry(master, textvariable = self.input_save)
+        entry_save.grid(row=4, column=2)
+        self.entry_save = entry_save
+        self.__init__buttons()
+        
+
+    def __init__buttons(self):
+        self.blurItButton = Button(self.master, text="Blur It!!", command = self.blurIt)
+        self.blurItButton.grid(row=5, column=1)
+        self.grayScaleButton = Button(self.master, text="Grayscale it!!", command = self.grayScale)
+        self.grayScaleButton.grid(row=5, column=2)
+        self.removeTextureButton = Button(self.master, text="Remove the texture!!", command = self.removeTexture)
+        self.removeTextureButton.grid(row=5, column=3)
+        
+        
+    def choose_file(self):
+        try:
+            path = askopenfilename(filetypes=[("JPEG","*.jpg"),("PNG","*png")])
+            file_name = path.split("/")
+            self.entry_file.delete(0)
+            self.entry_file.insert(0, file_name[-1])
+        except:
+            showerror('error','file format not supported')
+
+            
+                                   
+
+    def process(self):pass
+
+    def grayScale(self):
+        cv2.destroyAllWindows()
+        self.file_path = str(self.entry_file.get())
+        img = cv2.imread(self.file_path, 0)
+        self.img = img
+        cv2.imshow('Grayscaled',img)
+        self.saveButtons = Button(self.master, text="SAVE", command = self.saveFile)
+        self.saveButtons.grid(row=7, column=2)
+
+    def blurIt(self):
+        cv2.destroyAllWindows()
+        self.file_path = str(self.entry_file.get())
+        pict = cv2.imread(self.file_path,1)
+        arrayImage = np.asarray(pict)
+        img = cv2.blur(arrayImage, (5, 5),1)
+        self.img = img
+        cv2.imshow('Blurred',img)
+        self.saveButtons = Button(self.master, text="SAVE", command = self.saveFile)
+        self.saveButtons.grid(row=7, column=2)
+
+    def removeTexture(self):
+        cv2.destroyAllWindows()
+        self.file_path = str(self.entry_file.get())
+        shade = cv2.imread(self.file_path, 1)
+        img = cv2.bilateralFilter(shade,9,75,75)
+        self.img = img
+        cv2.imshow('texture removed',img)
+        self.saveButtons = Button(self.master, text="SAVE", command = self.saveFile)
+        self.saveButtons.grid(row=7, column=2)
+
+    def saveFile(self):
+        self.input_save = str(self.entry_save.get())
+        if self.input_save[-3:] == 'jpg':
+            cv2.imwrite(self.input_save,self.img)
+            showinfo("saved","your filtered image has been successfully saved")
+        elif self.input_save[-3:] == 'png':
+            cv2.imwrite(self.input_save,self.img)
+            showinfo("saved","your filtered image has been successfully saved")
+        else:
+            showerror('error','your new file name is wrong. please input a new one')
+        
+
+        
+    
+        
+ 
+
+def main():
+    root = Tk()
+    win = GradingImage(root)
+    root.mainloop()
+        
+            
+if __name__ == "__main__":
+    main()
