@@ -29,7 +29,7 @@ class GradingImage(Canvas):
         self.__init__buttons()
         
 
-    def __init__buttons(self):
+    def __init__buttons(self): #membuat tombol
         self.blurItButton = Button(self.master, text="Blur It!!", command = self.blurIt)
         self.blurItButton.grid(row=5, column=1)
         self.grayScaleButton = Button(self.master, text="Grayscale it!!", command = self.grayScale)
@@ -38,21 +38,16 @@ class GradingImage(Canvas):
         self.removeTextureButton.grid(row=5, column=3)
         
         
-    def choose_file(self):
+    def choose_file(self): 
         try:
-            path = askopenfilename(filetypes=[("JPEG","*.jpg"),("PNG","*png")])
+            path = askopenfilename(filetypes=[("JPEG","*.jpg"),("PNG","*png")]) #mengambil path file yang diinginkan
             file_name = path.split("/")
             self.entry_file.delete(0)
-            self.entry_file.insert(0, file_name[-1])
+            self.entry_file.insert(0, file_name[-1]) #mengambil nama file
         except:
             showerror('error','file format not supported')
 
-            
-                                   
-
-    def process(self):pass
-
-    def grayScale(self):
+    def grayScale(self): #untuk mengedit gambar menjadi grayscale
         cv2.destroyAllWindows()
         self.file_path = str(self.entry_file.get())
         img = cv2.imread(self.file_path, 0)
@@ -72,20 +67,20 @@ class GradingImage(Canvas):
         self.saveButtons = Button(self.master, text="SAVE", command = self.saveFile)
         self.saveButtons.grid(row=7, column=2)
 
-    def removeTexture(self):
+    def removeTexture(self): #untuk menedit gambar menghilangkan tekstur gambar
         cv2.destroyAllWindows()
         self.file_path = str(self.entry_file.get())
         shade = cv2.imread(self.file_path, 1)
-        img = cv2.bilateralFilter(shade,9,75,75)
+        img = cv2.bilateralFilter(shade,9,75,75) #fungsi opencv menghilangkan garis tekstur
         self.img = img
         cv2.imshow('texture removed',img)
         self.saveButtons = Button(self.master, text="SAVE", command = self.saveFile)
         self.saveButtons.grid(row=7, column=2)
 
-    def saveFile(self):
+    def saveFile(self): #untuk menyimpan file gambar
         self.input_save = str(self.entry_save.get())
-        if self.input_save[-3:] == 'jpg':
-            cv2.imwrite(self.input_save,self.img)
+        if self.input_save[-3:] == 'jpg': #agar sesuai dengan yang dinginkan formatnya
+            cv2.imwrite(self.input_save,self.img) #fungsi opencv untuk output
             showinfo("saved","your filtered image has been successfully saved")
         elif self.input_save[-3:] == 'png':
             cv2.imwrite(self.input_save,self.img)
@@ -96,8 +91,6 @@ class GradingImage(Canvas):
 
         
     
-        
- 
 
 def main():
     root = Tk()
